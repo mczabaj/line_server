@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  app:
+    environment:
+        # Blank out this value so the script does not wait for a config file to be loaded
+        # by the configuration module. This is only needed on a local development environment.
+        CONFIG_PATH_IN: ""

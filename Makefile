@@ -3,7 +3,7 @@ VERSION ?= latest
 DOCKERFILE = .
 GIT_COMMIT_TAG ?= none
 IMAGE_NAME = "mczabaj/$(NAME)"
-INSTANCE = default
+INSTANCE = build
 CONTAINER_NAME = "$(NAME).$(INSTANCE)"
 BUILD_IMAGE_NAME = "$(IMAGE_NAME):build"
 TEST_CONTAINER_NAME = "$(NAME).$(INSTANCE).test"
@@ -88,9 +88,6 @@ start: build verify-auth ## Start docker container in isolation (without docker-
 		--entrypoint sh  \
 		$(IMAGE_NAME):$(VERSION)
 
-#		--net="host" \
-## @docker exec -ti $(CONTAINER_NAME) lein figwheel
-
 dev: build
 	@docker run -d \
 		--name $(CONTAINER_NAME) \
@@ -131,26 +128,7 @@ test: verify-auth	## Run functional tests
 	@docker cp $(TEST_CONTAINER_NAME):$(TEST_RESULTS_DIR) ./
 	@docker stop $(TEST_CONTAINER_NAME)
 	@docker rm -f $(TEST_CONTAINER_NAME)
-	@make env-stop
-
-test-debug: verify-auth	## Run functional tests
-	@make test-env-start-d
-	@make URL=http://localhost:2525/imposters wait-for
-	@make URL=https://localhost:3000/api/v1/users/consumer@massmutual.com wait-for
-	@make URL=https://localhost:3000/api/v1/users/customer@massmutual.com wait-for
-	@make URL=http://localhost:80 wait-for
-	@-docker rm -f $(TEST_CONTAINER_NAME)
-	@-docker run -t \
-		--name $(TEST_CONTAINER_NAME) \
-		--volume `pwd`/cuke:/cuke \
-		--volume `pwd`/cuke-lib:/usr/src/app/lib \
-		--net "host" \
-		-e APP_HOST="http://localhost:80" \
-		-ti --entrypoint bash \
-		$(TEST_IMAGE_NAME)
-	@docker cp $(TEST_CONTAINER_NAME):$(TEST_RESULTS_DIR) ./
-	@docker stop $(TEST_CONTAINER_NAME)
-	@docker rm -f $(TEST_CONTAINER_NAME)
+	@make stop
 
 unit-test:
 	@lein test
@@ -171,6 +149,13 @@ wait-for: guard-URL
 ##
 ### Environment targets
 ##
+
+env-stop:	## Stop docker container
+	@docker-compose -f docker-compose.yml -f docker-compose-test.yml stop
+
+env-rm:		## Remove docker container
+	@docker-compose -f docker-compose.yml -f docker-compose-test.yml kill
+	@docker-compose -f docker-compose.yml -f docker-compose-test.yml rm --force
 
 env-start: verify-auth env-rm build	## Launch docker environment using configuration specified within docker-compose.yml
 	@docker-compose -f docker-compose.yml -f docker-compose-dev.yml up

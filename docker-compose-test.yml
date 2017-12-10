@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  app:
+    environment:
+      CONFIG_PATH_IN: ""
+      ASSETS_HOST: ""
+      APP_START_COMMAND: "java -jar /usr/src/app/target/uberjar/line_server.jar"
+    network_mode: "host"
+
+  chrome:
+    image: "selenium/standalone-chrome-debug:2.53.0"
+    #image: "selenium/standalone-chrome-debug:3.4.0"
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    network_mode: "host"
+
+# Define shared volumes
+volumes:
+  config: {}
