@@ -1,6 +1,5 @@
 (ns line-server.routes.services
-  (:require
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [compojure.api.sweet :refer :all]
             [line-server.domain.file :as f]
             [ring.util.http-response :refer :all]
@@ -19,7 +18,7 @@
       :return String
       :path-params [l :- Long]
       :summary "returns the line from the loaded file where l is the line number,"
-      (ok (f/get-line l))))
+      (f/get-line l)))
 
   (context "/api" []
     :tags ["sample math"]
