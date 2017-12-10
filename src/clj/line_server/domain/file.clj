@@ -5,10 +5,8 @@
             [ring.util.http-response :as response]
             [ring.util.http-status :as status]))
 
-(def file-to-read (clojure.java.io/reader "resources/files/sample_500K.txt"))
-
 (defn get-line [line-number]
-  (with-open [rdr file-to-read]
+  (with-open [rdr (clojure.java.io/reader "resources/files/sample_500K.txt")]
     (nth (line-seq rdr) line-number)))
 
 (defn read-file [line-number]
