@@ -18,7 +18,8 @@
       :return String
       :path-params [l :- Long]
       :summary "returns the line from the loaded file where l is the line number,"
-      (f/read-line l)))
+      (do (log/debug "GET request made: " l)
+          (f/file-line l))))
 
   (context "/api" []
     :tags ["sample math"]

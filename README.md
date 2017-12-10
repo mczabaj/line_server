@@ -19,6 +19,10 @@ To start a web server for the application, cd to app root and run:
 
     lein run
 
+^- for default file or, for a specific file:
+
+    lein run file=your_sample/file.txt
+
 Then, you can hit `localhost:3000/lines/:line-number`
 
 Additionally, you can view the Swagger UI at `localhost:3000/swagger-ui`
@@ -29,12 +33,29 @@ Note, using `lein run` will start the application with a default 500kb file.
 
 To start, you will need a dockerhub account. Once you have one, you can pull base images, run the following:
 
-  docker login
+    docker login
 
-  make build
+    make build
 
-  make ...
+    make env-start
 
+Once up, the container is redirecting the app port of 3000 to localhost:80. So just hit:
+
+    http://localhost/lines/swagger-ui
+
+## Run the compiled .jar
+
+To run the application from its compiled jar, containing all dependencies, do the following:
+
+    make uberjar
+
+    make run
+
+Or, if you have a specific file to run (not wanting the default),
+
+    make run FILE=your_sample/file.txt
+
+Then, like with running locally, it the endpoint will be available at localhost:3000.
 
 ## References
 
@@ -42,11 +63,11 @@ To start, you will need a dockerhub account. Once you have one, you can pull bas
 
 Generate a sample file: run below by replacing X and Y with number lines and number of words per line, respectively.
 
-  `ruby -e 'a=STDIN.readlines;*X*.times do;b=[];*Y*.times do; b << a[rand(a.size)].chomp end; puts b.join(" "); end' < /usr/share/dict/words > file1G.txt`
+    ruby -e 'a=STDIN.readlines;*X*.times do;b=[];*Y*.times do; b << a[rand(a.size)].chomp end; puts b.join(" "); end' < /usr/share/dict/words > file1G.txt
 
-  {x: 10000, y: 5} = 500K file
-  {x: 300000, y: 8} = 250G file
-  {x: 1000000, y: 12} = 100M file
+* {x: 10000, y: 5} = 500K file
+* {x: 300000, y: 8} = 250G file
+* {x: 1000000, y: 12} = 100M file
 
 https://www.skorks.com/2010/03/how-to-quickly-generate-a-large-file-on-the-command-line-with-linux/
 

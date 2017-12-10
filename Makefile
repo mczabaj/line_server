@@ -12,7 +12,9 @@ TEST_RESULTS_DIR = "/results/"
 ERROR_COLOR = \033[1;31m
 WARN_COLOR = \033[1;33m
 NO_COLOR = \033[0m
-WAITFOR_TIMEOUT = 30
+
+DOCKER_USER = ""
+DOCKER_PASSWORD = ""
 
 .PHONY: build push pull shell run start stop rm release test verify-auth
 
@@ -105,50 +107,18 @@ stop:	## Stop docker container
 rm:		## Remove docker container
 	@docker rm -f $(CONTAINER_NAME)
 
-# 1 - Spin up local environment
-# 2 - Execute tests against local environment
-# 3 - Tear down local environment when completed
-test: verify-auth	## Run functional tests
-	@make env-stop
-	@make env-rm
-	@make test-env-start-d
-	@make URL=http://localhost:2525/imposters wait-for
-	@make URL=https://localhost:3000/api/v1/users/consumer@massmutual.com wait-for
-	@make URL=https://localhost:3000/api/v1/users/customer@massmutual.com wait-for
-	@make URL=http://localhost:80 wait-for
-	@-docker rm -f $(TEST_CONTAINER_NAME)
-	@-docker run -t \
-		--name $(TEST_CONTAINER_NAME) \
-		--volume `pwd`/cuke:/cuke \
-		--volume `pwd`/cuke-lib:/usr/src/app/lib \
-		--net "host" \
-		-e APP_HOST="http://localhost:80" \
-		$(TEST_IMAGE_NAME) \
-		cuke
-	@docker cp $(TEST_CONTAINER_NAME):$(TEST_RESULTS_DIR) ./
-	@docker stop $(TEST_CONTAINER_NAME)
-	@docker rm -f $(TEST_CONTAINER_NAME)
-	@make stop
-
 unit-test:
 	@lein test
-
-wait-for: guard-URL
-	@echo -n "Waiting for $(URL) ..."
-	@i=0 ; check=1 ; \
-	while [ $$i -lt $(WAITFOR_TIMEOUT) -a $$check -ne 0 ] ; \
-	do \
-	  sleep 1 ; \
-	  echo -n "." ; \
-	  curl -ki -q -X GET $(URL) 1>/dev/null 2>&1 ; \
-	  check=$$? ; \
-	  i=$$((i + 1)) ; \
-	done ; \
-	exit $$check
 
 ##
 ### Environment targets
 ##
+
+uberjar: ## compile application to uberjar
+	@lein uberjar
+
+run: ## clean, build, and run the jar directly
+	@java -jar -Dconf=/usr/src/app/config.edn /usr/src/app/target/uberjar/line_server.jar
 
 env-stop:	## Stop docker container
 	@docker-compose -f docker-compose.yml -f docker-compose-test.yml stop

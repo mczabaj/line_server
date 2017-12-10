@@ -25,12 +25,12 @@ COPY src src/
 COPY test test/
 COPY resources resources/
 COPY env env/
-COPY run.sh ./
+COPY bootstrap_app.sh ./
 
 RUN lein uberjar
 
 # Start the server
-ENTRYPOINT ["/usr/src/app/run.sh"]
+ENTRYPOINT ["/usr/src/app/bootstrap_app.sh"]
 
 # No default params need to be passed, leaving them blank intentionally
 CMD []
