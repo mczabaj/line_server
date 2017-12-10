@@ -21,7 +21,7 @@ To start a web server for the application, cd to app root and run:
 
 ^- for default file or, for a specific file:
 
-    lein run file=your_sample/file.txt
+    lein run your_sample/file.txt
 
 Then, you can hit `localhost:3000/lines/:line-number`
 
@@ -53,7 +53,7 @@ To run the application from its compiled jar, containing all dependencies, do th
 
 Or, if you have a specific file to run (not wanting the default),
 
-    make run FILE=your_sample/file.txt
+    make run your_sample/file.txt
 
 Then, like with running locally, it the endpoint will be available at localhost:3000.
 

@@ -9,10 +9,7 @@
 (def file-name
   (if (empty? *command-line-args*)
     (:file env)
-    (let [arg (s/split (first *command-line-args*) #"=")]
-      (if (= "file" (first arg))
-        (second arg)
-        (:file env)))))
+    (first *command-line-args*)))
 
 (defn get-line [line-number]
   (log/debug "getting line from file: " file-name)
@@ -24,6 +21,7 @@
   (try
     (response/ok (get-line line-number))
     (catch Exception e
+      (log/error "exception: " e)
       (response/request-entity-too-large "line number cannot be beyond end of file"))))
 
 (defn file-line [line-number]

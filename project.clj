@@ -6,6 +6,7 @@
   :dependencies [[clj-time "0.14.0"]
                  [compojure "1.6.0"]
                  [cprop "0.1.11"]
+                 [criterium "0.4.4"]
                  [funcool/struct "1.1.0"]
                  [luminus-immutant "0.2.4"]
                  [luminus-nrepl "0.1.4"]
@@ -54,7 +55,7 @@
                                  [ring/ring-devel "1.6.3"]
                                  [pjstadig/humane-test-output "0.8.3"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.19.0"]]
-                  
+
                   :source-paths ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
