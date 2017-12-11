@@ -118,7 +118,7 @@ uberjar: ## compile application to uberjar
 	@lein uberjar
 
 run: ## clean, build, and run the jar directly
-	@java -jar -Dconf=/usr/src/app/config.edn /usr/src/app/target/uberjar/line_server.jar
+	@java -jar target/uberjar/line_server.jar ${FILE}
 
 env-stop:	## Stop docker container
 	@docker-compose -f docker-compose.yml -f docker-compose-test.yml stop

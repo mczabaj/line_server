@@ -6,12 +6,15 @@
             [ring.util.http-response :as response]
             [ring.util.http-status :as status]))
 
-(def file-name
-  (if (empty? *command-line-args*)
-    (:file env)
-    (first *command-line-args*)))
+(defn file-name []
+  (let [input-args (:arguments env)
+        dev-file   (:file env)]
+    (if input-args
+      (first input-args)
+      dev-file)))
 
 (defn get-line [line-number]
+  (println "command line args:" (first (:arguments env)))
   (log/debug "getting line from file: " file-name)
   (with-open [rdr (clojure.java.io/reader file-name)]
     (nth (line-seq rdr) line-number)))
